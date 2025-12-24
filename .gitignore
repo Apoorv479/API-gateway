@@ -1,0 +1,41 @@
+# Dependencies (Sabse Important: isse upload mat karna, ye bohot heavy hota hai)
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment Variables (Security ke liye ye kabhi upload nahi hone chahiye)
+.env
+.env.test
+.env.production
+.env.local
+
+# IDE & Editor files (Ye tumhare personal settings hain)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Mac OS System files
+.DS_Store
+
+# Windows System files
+Thumbs.db
+ehthumbs.db
+
+# Testing
+coverage/
+
+# Production Build (Agar baad me build banaoge)
+dist/
+build/
