@@ -1,15 +1,3 @@
-Maine aapki file check ki. Usme **formatting ke kaafi issues hain**:
-
-1. **Spacing:** Sections ek dusre me chipak gaye hain (e.g., `SetupClone`, `ConfigurationYou`).
-2. **Code Blocks:** Code blocks (`````) sahi se band nahi hue hain ya missing hain.
-3. **Lists:** Bullet points missing hain, jisse padhna mushkil ho raha hai.
-4. **Headers:** "Features" aur "Tech Stack" jaise headers bold nahi hain ya Markdown syntax (`##`) miss kar rahe hain.
-
-Niche **corrected aur formatted version** hai. Maine spacing thik kar di hai aur code blocks proper laga diye hain. Ise copy karke paste karein.
-
----
-
-````markdown
 # Node.js API Gateway
 
 A custom-built API Gateway designed to manage traffic for microservices. It acts as a single entry point, handling security, rate limiting, caching, and routing before requests reach the backend services.
@@ -37,6 +25,7 @@ This project implements a reverse proxy that decouples cross-cutting concerns fr
    ├── Route: /free    ────▶ [Service 1 (Port 3001)]
    └── Route: /premium ────▶ [Service 2 (Port 3002)]
 ```
+
 ````
 
 ## Features
@@ -130,6 +119,4 @@ curl -H "x-auth-token: admin123" http://localhost:8000/premium
 
 ```
 
-```
-
-```
+````
