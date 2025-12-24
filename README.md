@@ -1,122 +1,135 @@
-# Scalable API Gateway
+Maine aapki file check ki. Usme **formatting ke kaafi issues hain**:
 
-A lightweight, configuration-driven API Gateway built with Node.js. Designed to act as a unified entry point for microservices, handling cross-cutting concerns like traffic control, security, and caching before requests reach the downstream services.
+1. **Spacing:** Sections ek dusre me chipak gaye hain (e.g., `SetupClone`, `ConfigurationYou`).
+2. **Code Blocks:** Code blocks (`````) sahi se band nahi hue hain ya missing hain.
+3. **Lists:** Bullet points missing hain, jisse padhna mushkil ho raha hai.
+4. **Headers:** "Features" aur "Tech Stack" jaise headers bold nahi hain ya Markdown syntax (`##`) miss kar rahe hain.
 
-![Node.js](https://img.shields.io/badge/Node.js-v18-green) ![Express](https://img.shields.io/badge/Express-4.x-blue) ![License](https://img.shields.io/badge/License-MIT-orange)
+Niche **corrected aur formatted version** hai. Maine spacing thik kar di hai aur code blocks proper laga diye hain. Ise copy karke paste karein.
 
-## Architecture & Request Flow
+---
 
-This gateway sits between the client and the backend microservices. It processes requests through a middleware pipeline:
+````markdown
+# Node.js API Gateway
 
-```mermaid
-Client Request
+A custom-built API Gateway designed to manage traffic for microservices. It acts as a single entry point, handling security, rate limiting, caching, and routing before requests reach the backend services.
+
+## Project Overview
+
+This project implements a reverse proxy that decouples cross-cutting concerns from individual microservices.
+
+**Request Flow:**
+
+```text
+[Client]
    │
    ▼
-[Helmet & CORS]     ---> (Security Headers)
+[API Gateway (Port 8000)]
+   │
+   ├── 1. Security Check (Helmet & CORS)
+   ├── 2. Rate Limiting (DDoS Protection)
+   ├── 3. Caching Layer (In-Memory Check)
+   ├── 4. Authentication (Token Validation)
    │
    ▼
-[Rate Limiter]      ---> (DDoS Protection / Throttling)
+[Proxy Logic]
    │
-   ▼
-[Cache Layer]       ---> (In-Memory Caching - Short circuit if hit)
-   │
-   ▼
-[Auth Guard]        ---> (Token Verification)
-   │
-   ▼
-[Reverse Proxy]     ---> (Routes to Service A or Service B)
+   ├── Route: /free    ────▶ [Service 1 (Port 3001)]
+   └── Route: /premium ────▶ [Service 2 (Port 3002)]
+```
+````
 
-Key Features
-Dynamic Routing: Configuration-based routing (config.js) allows adding new services without changing core logic.
+## Features
 
-Rate Limiting: IP-based traffic control using express-rate-limit to prevent abuse and DDoS attacks.
+- **Dynamic Routing:** Routes are defined in a configuration file, making it easy to add new microservices.
+- **Rate Limiting:** Restricts the number of requests per IP to prevent system abuse (e.g., 5 requests/min for free tier).
+- **Caching:** Caches GET responses in memory to reduce load on backend servers and improve response time.
+- **Authentication:** Centralized middleware to verify authorization tokens before forwarding requests.
+- **Logging:** Detailed request logging using Morgan for monitoring and debugging.
+- **Security:** Implements Helmet for secure HTTP headers.
 
-Caching Strategy: Implemented apicache to reduce load on backend services for frequent read operations.
+## Tech Stack
 
-Security First: Integrated helmet for header security and cors for cross-origin resource sharing.
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Proxy:** http-proxy-middleware
+- **Traffic Control:** express-rate-limit
+- **Caching:** apicache
 
-Observability: Request logging via morgan for debugging and monitoring traffic patterns.
+## Installation & Setup
 
-Authentication: Centralized middleware to validate x-auth-token headers.
+### 1. Clone the repository
 
-Tech Stack
-Runtime: Node.js
+```bash
+git clone https://github.com/Apoorv479/API-gateway.git
+cd API-gateway
 
-Framework: Express.js
+```
 
-Proxy Engine: http-proxy-middleware
+### 2. Install Dependencies
 
-Security: helmet, cors
-
-Traffic Control: express-rate-limit
-
-Project Structure
-Bash
-
-api-gateway/
-├── src/
-│   ├── config.js          # Central Configuration (Routes, Rules)
-│   ├── server.js          # Entry point & Middleware assembly
-│   └── middlewares/
-│       ├── auth.js        # Auth logic
-│       ├── logger.js      # Custom logging
-│       └── ratelimit.js   # Rate limit generator
-├── test-servers.js        # Mock microservices for testing
-└── package.json
-
-
-
-Getting Started
-Prerequisites
-Node.js (v14 or higher)
-
-
-Clone the repository:
-
-git clone [https://github.com/your-username/api-gateway.git](https://github.com/your-username/api-gateway.git)
-cd api-gateway
-Install dependencies:
-
-
-
+```bash
 npm install
-Start the Mock Services (to simulate backend):
 
-Bash
+```
 
+### 3. Start the Mock Backend Services
+
+(This runs two dummy servers on ports 3001 and 3002 to simulate a real microservices environment)
+
+```bash
 node test-servers.js
-(Runs Service A on port 3001 and Service B on port 3002)
 
-Start the Gateway (in a new terminal):
+```
 
-Bash
+### 4. Start the Gateway
 
-npm start
-# or
+(Open a new terminal window)
+
+```bash
 node src/server.js
-The Gateway will be live at http://localhost:8000.
 
-Configuration
-The entire behavior of the gateway is controlled via src/config.js. You can define routes, toggle authentication, set cache timers, and define rate limits per route.
+```
 
-JavaScript
+The Gateway will be running at: `http://localhost:8000`
 
-// Example Configuration
+## Configuration
+
+You can modify `src/config.js` to change routing rules, rate limits, or caching duration.
+
+**Example Configuration:**
+
+```javascript
 {
-    url: '/premium',
-    auth: true,             // Requires x-auth-token
-    cache: false,           // Real-time data (No cache)
+    url: '/free',
+    auth: false,             // No token required
+    cache: '2 minutes',      // Cache response for 2 mins
     rateLimit: {
-        windowMs: 60000,
-        max: 50             // 50 req/min
+        windowMs: 60000,     // 1 Minute
+        max: 5               // Max 5 requests
     },
     proxy: {
-        target: "http://localhost:3002",
+        target: "http://localhost:3001",
         changeOrigin: true
     }
 }
-Design Decisions & Trade-offs
-Why Rate Limiting in Memory? For this MVP, I used in-memory storage for simplicity. In a production or clustered environment, I would utilize a Redis Store to maintain state across multiple gateway instances.
 
-Centralized Auth: Authentication is handled at the Gateway level to offload redundancy from microservices, adhering to the API Gateway Pattern.
+```
+
+## API Endpoints for Testing
+
+| Route      | Method | Description          | Auth Required | Rate Limit |
+| ---------- | ------ | -------------------- | ------------- | ---------- |
+| `/free`    | GET    | Proxies to Service 1 | No            | 5 req/min  |
+| `/premium` | GET    | Proxies to Service 2 | Yes (Token)   | 50 req/min |
+
+**To test the Premium route using CURL:**
+
+```bash
+curl -H "x-auth-token: admin123" http://localhost:8000/premium
+
+```
+
+```
+
 ```
