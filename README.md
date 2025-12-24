@@ -26,7 +26,7 @@ This project implements a reverse proxy that decouples cross-cutting concerns fr
    └── Route: /premium ────▶ [Service 2 (Port 3002)]
 ```
 
-````
+
 
 ## Features
 
@@ -120,4 +120,4 @@ curl -H "x-auth-token: admin123" http://localhost:8000/premium
 ```
 
 
-````
+
